@@ -1,35 +1,48 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 
-function App() {
-  const [count, setCount] = useState(0)
+const App = () => {
+  const [quote, setQuote] = useState('');
+
+
+  const fetchQuote = async () => {
+    try {
+      const res = await axios.get('https://dummyjson.com/quotes');
+      const quotes = res.data.quotes;
+      const randomIndex = Math.floor(Math.random() * quotes.length);
+      const selectedQuote = quotes[randomIndex];
+      setQuote(selectedQuote.quote);
+      setAuthor(selectedQuote.author);
+    } catch (err) {
+      console.log('Failed to fetch data:', err);
+    }
+  };
+
+  useEffect(() => {
+    fetchQuote();
+  }, []);
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <div style={{ padding: '2rem', fontFamily: 'serif', textAlign: 'center' }}>
+      <blockquote style={{ fontSize: '1.5rem', fontStyle: 'italic' }}>
+        {quote}
+      </blockquote>
 
-export default App
+      <button
+        onClick={fetchQuote}
+        style={{
+          marginTop: '2rem',
+          padding: '0.5rem 1rem',
+          fontSize: '1rem',
+          cursor: 'pointer',
+          borderRadius: '6px',
+          backgroundColor: '#eee',
+        }}
+      >
+        New Quote
+      </button>
+    </div>
+  );
+};
+
+export default App;
